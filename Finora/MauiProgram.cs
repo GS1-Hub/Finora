@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Finora.Services;
+using Finora.Services.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace Finora
 {
@@ -16,8 +18,10 @@ namespace Finora
 
             builder.Services.AddMauiBlazorWebView();
 
+            builder.Services.AddScoped<HttpClient>();
+            builder.Services.AddScoped<IFinService, FinService>();
 #if DEBUG
-    		builder.Services.AddBlazorWebViewDeveloperTools();
+            builder.Services.AddBlazorWebViewDeveloperTools();
     		builder.Logging.AddDebug();
 #endif
 
