@@ -1,46 +1,73 @@
 ﻿@page "/finance"
-@inject Finora.Services.Interfaces.IFinService FinService
+@using Finora.Models
+@inject IFinService FinService
 
-<h1>Finance</h1>
+<div class="finance-page">
+    <header class="finance-header">
+        <div>
+            <h1>Finance</h1>
+        </div>
+        <div class="hero-total">
+            <span class="hero-label">Total tracked</span>
+            <span class="hero-value">@totalAmount.ToString("C")</span>
+        </div>
+    </header>
 
-@if (fins == null)
-{
-    <p>A carregar...</p>
-}
-else if (!fins.Any())
-{
-    <p>Sem registos ainda.</p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Amount</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
+    @if (fins == null)
+    {
+        <p class="status-text">A carregar o teu livro de contas...</p>
+    }
+    else if (!fins.Any())
+    {
+        <div class="empty-state">
+            <p>Ainda não há nada registado.</p>
+            <span>Assim que adicionares dados pela API, aparecem aqui.</span>
+        </div>
+    }
+    else
+    {
+        <div class="card-grid">
             @foreach (var f in fins)
             {
-                <tr>
-                    <td>@f.Name</td>
-                    <td>@f.Description</td>
-                    <td>@f.Amount.ToString("C")</td>
-                </tr>
+                <div class="fin-card">
+                    <div class="fin-avatar">@GetInitial(f.Name)</div>
+                    <h3 class="fin-name">@f.Name</h3>
+                    <p class="fin-desc">@f.Description</p>
+                    <p class="fin-amount">@f.Amount.ToString("C")</p>
+                </div>
             }
-        </tbody>
-    </table>
-}
+        </div>
+    }
+</div>
 
 @code {
     private List<Fin>? fins;
 
+    private decimal totalAmount => fins?.Sum(f => f.Amount) ?? 0;
+
+    private static readonly string[] accents = { "#f2b84b", "#8b7fd1", "#5ec8c0", "#d97ea0" };
+
     protected override async Task OnInitializedAsync()
     {
-        fins = await FinService.GetAllFinsAsync();
+        try
+        {
+            fins = await FinService.GetAllFinsAsync();
+        }
+        catch
+        {
+            fins = new List<Fin>();
+        }
     }
 
+    private string GetInitial(string name) =>
+        string.IsNullOrEmpty(name) ? "?" : name[0].ToString().ToUpper();
+
+    private string GetAccent(string name)
+    {
+        int hash = 0;
+        foreach (var c in name ?? "")
+            hash = c + ((hash << 5) - hash);
+        var idx = Math.Abs(hash) % accents.Length;
+        return accents[idx];
+    }
 }
