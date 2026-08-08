@@ -1,0 +1,36 @@
+﻿@page "/"
+@using Layout
+@layout EmptyLayout
+@inject NavigationManager Navigation
+
+<div class="loading-container">
+    <img src="finimg.png" alt="Finora" class="loading-icon"/>
+    <div class="progress-track">
+        <div class="progress-fill" style="width:@(progress)%"></div>
+    </div>
+</div>
+
+@code {
+    private int progress = 0;
+    private System.Threading.Timer? timer;
+
+    protected override void OnInitialized()
+    {
+        timer = new System.Threading.Timer(async _ =>
+        {
+            progress += 2;
+
+            if (progress >= 100)
+            {
+                timer?.Dispose();
+                await InvokeAsync(() =>
+                {
+                    Navigation.NavigateTo("/finance");
+                });
+                return;
+            }
+
+            await InvokeAsync(StateHasChanged);
+        }, null, 0, 30);
+    }
+}
