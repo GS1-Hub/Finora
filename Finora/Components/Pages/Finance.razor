@@ -1,6 +1,7 @@
 ﻿@page "/finance"
 @using Finora.Models
 @inject IFinService FinService
+@inject NavigationManager NavManager
 
 <div class="finance-page">
     <header class="finance-header">
@@ -12,7 +13,9 @@
             <span class="hero-value">@totalAmount.ToString("C")</span>
         </div>
     </header>
-
+    <div class="hero-total">
+        <button @onclick="() => OpenModalCreate()">+</button>
+    </div>
     @if (fins == null)
     {
         <p class="status-text">A carregar o teu livro de contas...</p>
@@ -73,7 +76,11 @@
     }
     private async Task DeleteFin(int id)
     {
-            await FinService.DeleteFin(id);
-            fins?.RemoveAll(f => f.Id == id);
+        await FinService.DeleteFin(id);
+        fins?.RemoveAll(f => f.Id == id);
+    }
+    private void OpenModalCreate()
+    {
+        NavManager.NavigateTo("/createFin");
     }
 }
