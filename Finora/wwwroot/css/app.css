@@ -1,7 +1,14 @@
 ﻿/*#if (SampleContent)*/
 html, body {
+    margin: 0;
+    padding: 0;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background-color: #0d1220;
+    height: 100%;
+}
+
+#app, .page, main, .content {
+    height: 100%;
 }
 
 a, .btn-link {

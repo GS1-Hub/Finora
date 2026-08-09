@@ -34,6 +34,7 @@
                     <h3 class="fin-name">@f.Name</h3>
                     <p class="fin-desc">@f.Description</p>
                     <p class="fin-amount">@f.Amount.ToString("C")</p>
+                    <button @onclick="() => DeleteFin(f.Id)">Delete</button>
                 </div>
             }
         </div>
@@ -69,5 +70,10 @@
             hash = c + ((hash << 5) - hash);
         var idx = Math.Abs(hash) % accents.Length;
         return accents[idx];
+    }
+    private async Task DeleteFin(int id)
+    {
+            await FinService.DeleteFin(id);
+            fins?.RemoveAll(f => f.Id == id);
     }
 }

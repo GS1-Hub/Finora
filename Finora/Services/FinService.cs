@@ -18,6 +18,10 @@ namespace Finora.Services
             var result = await _http.GetFromJsonAsync<List<Fin>>(BaseUrl + API.GetFins);
             return result ?? new List<Fin>();
         }
-
+        public async Task DeleteFin(int id)
+        {
+            var response = await _http.DeleteAsync($"{BaseUrl}{API.DeleteFin}/{id}");
+            response.EnsureSuccessStatusCode();
+        }
     }
 }
